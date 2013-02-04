@@ -21,19 +21,19 @@ Alongside with the source file *ConsoleMotionRecorder.py* the Leap python API sh
 
 After starting the tool, the following key tokens are available:
 
-* **[h]**		track hand data
-* **[f]**		track finger data
-* **[enter]**		track what moved last
-* **[p]**		record position *(toggle)*
-* **[v]**		record velocity *(toggle)*
-* **[x]**		record x component *(toggle)*
-* **[y]**		record y component *(toggle)*
-* **[z]**		record z component *(toggle)*
-* **[t]**		record timestamp *(toggle)*
-* **[e]**		generate export file *(toggle)*
-* **[SPACE]**		start/stop recording
-* **[m]**		mark current frame *(while recording)*
-* **[q/ESC]**		quit
+* **[h]**   track hand data
+* **[f]**   track finger data
+* **[enter]**   track what moved last
+* **[p]**   record position *(toggle)*
+* **[v]**   record velocity *(toggle)*
+* **[x]**   record x component *(toggle)*
+* **[y]**   record y component *(toggle)*
+* **[z]**   record z component *(toggle)*
+* **[t]**   record timestamp *(toggle)*
+* **[e]**   generate export file *(toggle)*
+* **[SPACE]**   start/stop recording
+* **[m]**   mark current frame *(while recording)*
+* **[q/ESC]**   quit
 
 As soon as the Leap device is plugged in and the Leap app is running, the tool recognizes hand/finger (depends on tracking selection) movement and prints them out.
 
@@ -62,6 +62,6 @@ The following settings are default:
 * generate an export file
 
 So, one data packet looks like this:
-`ID	Y: 	position		velocity`
+`ID   Y: position   velocity`
 
 After closing the recording tool, these settings are stored in the file *settings.dat*. If this file is present in the working directory of the tool at startup, the tool will load the initial settings from this file instead of generation a new default set. 
