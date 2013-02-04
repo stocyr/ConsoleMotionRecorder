@@ -6,7 +6,7 @@ Except for _Getch, _GetchUnix and _GetchWindows and _GetchMacCarbon
 --> Source: http://code.activestate.com/recipes/134892/
 
 ConsoleMotionRecorder is free software: you can redistribute it and/or
-modifyit under the terms of the GNU General Public License as published
+modify it under the terms of the GNU General Public License as published
 by the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 '''
