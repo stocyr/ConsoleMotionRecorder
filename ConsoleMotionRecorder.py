@@ -180,7 +180,7 @@ class RecorderListener(Leap.Listener):
         frame = controller.frame()
         
         # determine average FPS
-        if controller.frame().is_valid:
+        if controller.frame(self.FPS_HISTORY).is_valid:
             self.average_fps =  float(1000000.0*self.FPS_HISTORY/(frame.timestamp - controller.frame(self.FPS_HISTORY).timestamp))
 
         # if there are hands/fingers in the field of view
