@@ -1,4 +1,4 @@
-*.py[cod]
+*.pyc
 
 # C extensions
 *.so
@@ -33,3 +33,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Tool specific ingores:
+leapMotionRecord_*.txt
+settings.dat
