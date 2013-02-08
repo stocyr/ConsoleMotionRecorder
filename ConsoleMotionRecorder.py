@@ -167,7 +167,8 @@ class RecorderListener(Leap.Listener):
         self.recording = False
         if self.settings['export_file']:
             self.file.close()
-        print ""   
+        print ""  
+        print "" 
         print_help()     
 
     def mark_frame(self):
@@ -183,76 +184,71 @@ class RecorderListener(Leap.Listener):
         if controller.frame(self.FPS_HISTORY).is_valid:
             self.average_fps =  float(1000000.0*self.FPS_HISTORY/(frame.timestamp - controller.frame(self.FPS_HISTORY).timestamp))
 
-        # if there are hands/fingers in the field of view
-        if not frame.hands.empty:
-            # am I recording?
-            if self.recording:
-                velocity = Leap.Vector()
-                position = Leap.Vector()
+        # am I recording?
+        if self.recording:
+            velocity = Leap.Vector()
+            position = Leap.Vector()
+            
+            # search for the ID stored earlier
+            if self.settings['track_hand'] and frame.hand(self.tracking_id).is_valid:
+                # if object was found, copy raw data
+                velocity = frame.hand(self.tracking_id).palm_velocity
+                position = frame.hand(self.tracking_id).palm_position
                 
-                # search for the ID stored earlier
-                for hand in frame.hands:
-                    if self.settings['track_hand']:
-                        if self.tracking_id == hand.id:
-                            # if object was found, copy raw data
-                            velocity = hand.palm_velocity
-                            position = hand.palm_position
-                    elif not hand.fingers.empty:
-                        for finger in hand.fingers:
-                            if self.tracking_id == finger.id:
-                                # if object was found, copy raw data
-                                velocity = finger.tip_velocity
-                                position = finger.tip_position
-                
-                # ID not found - abort
-                if velocity == Leap.Vector(0,0,0):
-                    print "ERROR: tracking ID not found - aborting"
-                    if self.settings['export_file']:
-                        self.file.write("ERROR: tracking ID not found - aborting")
-                    self.record_stop()
-                else:
-                    # all went well? gather data
-                    data = "%d" % frame.id
-                    if self.settings['record_timestamp']:
-                        data += "\t%d" % frame.timestamp
-                    if self.settings['record_x']:
-                        if self.settings['record_position']:
-                            data += "\t%f" % position.x
-                        if self.settings['record_velocity']:
-                            data += "\t%f" % velocity.x
-                    if self.settings['record_y']:
-                        if self.settings['record_position']:
-                            data += "\t%f" % position.y
-                        if self.settings['record_velocity']:
-                            data += "\t%f" % velocity.y
-                    if self.settings['record_z']:
-                        if self.settings['record_position']:
-                            data += "\t%f" % position.z
-                        if self.settings['record_velocity']:
-                            data += "\t%f" % velocity.z
-                    if self.mark_frame_flag:
-                        # does the current frame has to be marked?
-                        data += "\t1"
-                        self.mark_frame_flag = False    # YOMO - you only mark once
-                    
-                    # output data
-                    print data
-                    if self.settings['export_file']:
-                        self.file.write(data + '\n')
+            elif not self.settings['track_hand'] and frame.pointable(self.tracking_id).is_valid:
+                # if object was found, copy raw data
+                velocity = frame.pointable(self.tracking_id).tip_velocity
+                position = frame.pointable(self.tracking_id).tip_position
             else:
-                # not recording? -> movement detection only -> needed for object identification
+                # ID not found - abort
+                print "ERROR: tracking ID not found - aborting"
+                if self.settings['export_file']:
+                    self.file.write("ERROR: tracking ID not found - aborting")
+                self.record_stop()
+                
+            if self.recording:
+                # not aborted yet? gather data
+                data = "%d" % frame.id
+                if self.settings['record_timestamp']:
+                    data += "\t%d" % frame.timestamp
+                if self.settings['record_x']:
+                    if self.settings['record_position']:
+                        data += "\t%f" % position.x
+                    if self.settings['record_velocity']:
+                        data += "\t%f" % velocity.x
+                if self.settings['record_y']:
+                    if self.settings['record_position']:
+                        data += "\t%f" % position.y
+                    if self.settings['record_velocity']:
+                        data += "\t%f" % velocity.y
+                if self.settings['record_z']:
+                    if self.settings['record_position']:
+                        data += "\t%f" % position.z
+                    if self.settings['record_velocity']:
+                        data += "\t%f" % velocity.z
+                if self.mark_frame_flag:
+                    # does the current frame has to be marked?
+                    data += "\t1"
+                    self.mark_frame_flag = False    # YOMO - you only mark once
+                
+                # output data
+                print data
+                if self.settings['export_file']:
+                    self.file.write(data + '\n')
+        else:
+            # not recording? -> movement detection only -> needed for object identification
+            if self.settings['track_hand'] and not frame.hands.empty:
                 for hand in frame.hands:
-                    if self.settings['track_hand']:
-                        # search through every hand: big movement and not same ID as before?
-                        if hand.palm_velocity.magnitude > self.THRESHOLD_MOVEMENT and self.moving_id != hand.id:
-                            self.moving_id = hand.id
-                            print "movement of hand ID %d - press [ENTER] to track it" % hand.id
-                    elif not hand.fingers.empty:
-                        for finger in hand.fingers:
-                            # search though every finger: big movement and not same ID as before?
-                            if finger.tip_velocity.magnitude > self.THRESHOLD_MOVEMENT and self.moving_id != finger.id:
-                                self.moving_id = finger.id
-                                print "movement of finger ID %d - press [ENTER] to track it" % finger.id
+                    # search through every hand: big movement and not same ID as before?
+                    if hand.palm_velocity.magnitude > self.THRESHOLD_MOVEMENT and self.moving_id != hand.id:
+                        self.moving_id = hand.id
+                        print "movement of hand ID %d - press [ENTER] to track it" % hand.id
+            elif not self.settings['track_hand'] and not frame.pointables.empty:
+                for pointable in frame.pointables:
+                    # search though every finger: big movement and not same ID as before?
+                    if pointable.tip_velocity.magnitude > self.THRESHOLD_MOVEMENT and self.moving_id != pointable.id:
+                        self.moving_id = pointable.id
+                        print "movement of finger ID %d - press [ENTER] to track it" % pointable.id
 
 
 def main():
