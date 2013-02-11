@@ -2,7 +2,7 @@
 ConsoleMotionRecorder
 
 Copyright (C) 2013  Cyril Stoller
-Except for _Getch, _GetchUnix and _GetchWindows and _GetchMacCarbon
+Except for _Getch, _GetchUnix, _GetchWindows and _GetchMacCarbon
 --> Source: http://code.activestate.com/recipes/134892/
 
 ConsoleMotionRecorder is free software: you can redistribute it and/or
@@ -367,6 +367,8 @@ def main():
         # transmit these changed settings to the listener class
         if not listener.recording:
             listener.update(settings)
+    
+    print "Exiting..."
     
     # app closes: Remove the listener
     controller.remove_listener(listener)
