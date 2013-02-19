@@ -103,6 +103,7 @@ def print_help():
     print " [x]     record x component (toggle)"
     print " [y]     record y component (toggle)"
     print " [z]     record z component (toggle)"
+    print " [s]     record special custom data (toggle)"
     print ""
     print " [t]     record timestamp (toggle)"
     print " [e]     generate export file (toggle)"
@@ -117,11 +118,12 @@ def generate_format(settings, no_tab=False):
     format_string = "ID"
     component = ""
     if settings['record_timestamp']: format_string += "\ttimestamp"
-    if settings['record_position']: component = " position"
+    if settings['record_position']: component += " position"
     if settings['record_velocity']: component += "\tvelocity"
     if settings['record_x']: format_string += "\tX:" + component
     if settings['record_y']: format_string += "\tY:" + component
     if settings['record_z']: format_string += "\tZ:" + component
+    if settings['special_data']: format_string += "\tSpecialData"
     
     if no_tab:
         format_string = format_string.replace("\t", "  ")
@@ -226,6 +228,15 @@ class RecorderListener(Leap.Listener):
                         data += "\t%f" % position.z
                     if self.settings['record_velocity']:
                         data += "\t%f" % velocity.z
+                if self.settings['special_data']:
+                    data += "\t"
+                    ###################################################
+                    ## HERE YOU CAN PUT YOUR OWN CUSTOM EXPORT VALUE ##
+                    ###################################################
+                    ## EXAMPLE: projected velocity towards the palm  ##
+                    data += "%f" % velocity.dot(frame.pointable(self.tracking_id).hand.palm_position - position)/frame.pointable(self.tracking_id).hand.palm_position
+                    ##                                               ##
+                    ###################################################
                 if self.mark_frame_flag:
                     # does the current frame has to be marked?
                     data += "\t1"
@@ -264,6 +275,7 @@ def main():
                     'record_x': False,
                     'record_y': True,
                     'record_z': False,
+                    'special_data': False,
                     'record_timestamp': False,
                     'export_file': True}
         
@@ -332,6 +344,10 @@ def main():
             if settings['record_x'] or settings['record_y'] or not settings['record_z']:
                 settings['record_z'] = not settings['record_z']
             print generate_format(settings, True)
+        # S:
+        elif inputchar == 's':
+            settings['special_data'] = not settings['special_data']
+            print generate_format(settings, True)
         # E:
         elif inputchar == 'e':
             settings['export_file'] = not settings['export_file']
@@ -354,7 +370,7 @@ def main():
                     listener.record_stop()
                 else:
                     # generate time stamp for filename and start recording
-                    filename = time.strftime("LeapMotionRecord_%Y%m%d_%H%M.txt")
+                    filename = time.strftime("LeapMotionRecord_%Y%m%d_%H%M%S.txt")
                     listener.record_start(settings, filename)            
         # M:
         elif inputchar == 'm':

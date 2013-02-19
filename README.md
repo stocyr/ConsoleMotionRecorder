@@ -29,6 +29,7 @@ After starting the tool, the following key tokens are available:
 * **[x]**   record x component *(toggle)*
 * **[y]**   record y component *(toggle)*
 * **[z]**   record z component *(toggle)*
+* **[s]**   record special custom data *(toggle)*
 * **[t]**   record timestamp *(toggle)*
 * **[e]**   generate export file *(toggle)*
 * **[SPACE]**   start/stop recording
@@ -37,7 +38,9 @@ After starting the tool, the following key tokens are available:
 
 As soon as the Leap device is plugged in and the Leap app is running, the tool recognizes hand/finger (depends on tracking selection) movement and prints them out.
 
-If desired, an export file can be generated. The filename has the following format: *LeapMotionRecord_YYYYMMDD_mmss.txt*.
+Special custom data can be exported. The code to form it is well visible commented and can consist of any data (processed with math operations if desired) provided by the Leap device.
+
+If desired, an export file can be generated. The filename has the following format: *LeapMotionRecord_YYYYMMDD_hhmmss.txt*.
 During recording, the current frame can be marked. This will add a *1* after the last column in that specific line.
 
 ### Recording
