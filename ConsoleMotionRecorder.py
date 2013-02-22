@@ -234,7 +234,8 @@ class RecorderListener(Leap.Listener):
                     ## HERE YOU CAN PUT YOUR OWN CUSTOM EXPORT VALUE ##
                     ###################################################
                     ## EXAMPLE: projected velocity towards the palm  ##
-                    data += "%f" % velocity.dot(frame.pointable(self.tracking_id).hand.palm_position - position)/frame.pointable(self.tracking_id).hand.palm_position
+                    distance = frame.pointable(self.tracking_id).hand.palm_position - position
+                    data += "%f" % velocity.dot(distance) / distance.magnitude
                     ##                                               ##
                     ###################################################
                 if self.mark_frame_flag:
