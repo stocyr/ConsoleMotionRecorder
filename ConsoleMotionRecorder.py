@@ -115,7 +115,7 @@ def print_help():
 
 
 def generate_format(settings, no_tab=False):
-    format_string = "ID"
+    format_string = "frame"
     component = ""
     if settings['record_timestamp']: format_string += "\ttimestamp"
     if settings['record_position']: component += " position"
@@ -233,9 +233,8 @@ class RecorderListener(Leap.Listener):
                     ###################################################
                     ## HERE YOU CAN PUT YOUR OWN CUSTOM EXPORT VALUE ##
                     ###################################################
-                    ## EXAMPLE: projected velocity towards the palm  ##
-                    distance = frame.pointable(self.tracking_id).hand.palm_position - position
-                    data += "%f" % velocity.dot(distance) / distance.magnitude
+                    ## EXAMPLE: finger width                         ##
+                    data += "%f" % frame.pointable(self.tracking_id).width
                     ##                                               ##
                     ###################################################
                 if self.mark_frame_flag:
